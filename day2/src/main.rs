@@ -55,12 +55,15 @@ fn main() -> io::Result<()> {
     //     "down 8",
     //     "forward 2",
     // ];
-    let commands = input.iter().map(|i| command(i).finish().unwrap().1);
+    let commands = input
+        .iter()
+        .map(|i| command(i).finish().unwrap().1)
+        .collect::<Vec<_>>();
     println!("Input: {:?}", commands);
 
     // Part1
     let mut pos = (0, 0);
-    for c in commands {
+    for c in commands.iter() {
         match c {
             Command::Forward(i) => {
                 pos = (pos.0 + i, pos.1);
@@ -77,7 +80,24 @@ fn main() -> io::Result<()> {
     println!("Part1: {}", part1);
 
     // Part2
-    let part2 = "";
+    let mut depth = 0;
+    let mut horizontal = 0;
+    let mut aim = 0;
+    for c in commands.iter() {
+        match c {
+            Command::Forward(i) => {
+                horizontal += i;
+                depth += aim * i;
+            }
+            Command::Down(i) => {
+                aim += i;
+            }
+            Command::Up(i) => {
+                aim -= i;
+            }
+        }
+    }
+    let part2 = depth * horizontal;
     println!("Part2: {}", part2);
 
     Ok(())
