@@ -80,24 +80,12 @@ fn main() -> io::Result<()> {
     println!("Part1: {}", part1);
 
     // Part2
-    let mut depth = 0;
-    let mut horizontal = 0;
-    let mut aim = 0;
-    for c in commands.iter() {
-        match c {
-            Command::Forward(i) => {
-                horizontal += i;
-                depth += aim * i;
-            }
-            Command::Down(i) => {
-                aim += i;
-            }
-            Command::Up(i) => {
-                aim -= i;
-            }
-        }
-    }
-    let part2 = depth * horizontal;
+    let (a, b, _) = commands.iter().fold((0, 0, 0), |acc, item| match item {
+        Command::Forward(i) => (acc.0 + i, acc.1 + acc.2 * i, acc.2),
+        Command::Down(i) => (acc.0, acc.1, acc.2 + i),
+        Command::Up(i) => (acc.0, acc.1, acc.2 - i),
+    });
+    let part2 = a * b;
     println!("Part2: {}", part2);
 
     Ok(())
