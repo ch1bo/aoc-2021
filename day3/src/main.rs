@@ -3,41 +3,38 @@ use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
 
+fn check_bit(number: &u64, position: usize) -> bool {
+    number & (1 << position) != 0
+}
+
 fn main() -> io::Result<()> {
-    let file = File::open("input")?;
-    let reader = BufReader::new(file);
-    let input: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
-    // let input = [
-    //     "00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000", "11001",
-    //     "00010", "01010",
-    // ];
-    println!("Input: {:?}", input);
+    // let file = File::open("input")?;
+    // let reader = BufReader::new(file);
+    // let input: Vec<String> = reader.lines().map(|l| l.unwrap()).collect();
+    let input = [
+        "00100", "11110", "10110", "10111", "10101", "01111", "00111", "11100", "10000", "11001",
+        "00010", "01010",
+    ];
+    let entries: Vec<u64> = input.map(|l| u64::from_str_radix(l, 2).unwrap()).to_vec();
+    println!("Input: {:?}", entries);
 
     // Part1
-    let total = input.len();
     let num_bits = input[0].len();
-    let mut gamma = 0;
+    let total = entries.len();
+    let mut gamma: u32 = 0;
     let mut epsilon = 0;
     for i in 0..num_bits {
-        let count: usize = input
+        let ones: usize = entries
             .iter()
-            .map(|bits| {
-                if bits.chars().nth(i) == Some('1') {
-                    1
-                } else {
-                    0
-                }
-            })
+            .map(|bits| if check_bit(bits, i) { 1 } else { 0 })
             .sum();
-        if count > total / 2 {
-            gamma = (gamma + 1) << 1;
-            epsilon = epsilon << 1;
+        if ones > total / 2 {
+            gamma += 1 << i;
         } else {
-            gamma = gamma << 1;
-            epsilon = (epsilon + 1) << 1;
+            epsilon += 1 << i;
         }
     }
-    let part1 = (gamma >> 1) * (epsilon >> 1);
+    let part1 = gamma * epsilon;
     println!("Part1: {}", part1);
 
     // Part2
